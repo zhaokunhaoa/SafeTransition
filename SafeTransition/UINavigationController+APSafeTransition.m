@@ -112,3 +112,25 @@ static char const * const ObjectTagKey = "ObjectTag";
 }
 
 @end
+
+@implementation UIViewController (APSafeTransitionLock)
+
++ (void)load {
+    
+    Method m1;
+    Method m2;
+    
+    m1 = class_getInstanceMethod(self, @selector(sofaViewDidAppear:));
+    m2 = class_getInstanceMethod(self, @selector(viewDidAppear:));
+    
+    method_exchangeImplementations(m1, m2);
+}
+
+- (void)sofaViewDidAppear:(BOOL)animated {
+    
+    self.navigationController.viewTransitionInProgress = NO;
+    
+    [self sofaViewDidAppear:animated];
+}
+
+@end

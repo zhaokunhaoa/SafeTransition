@@ -13,3 +13,7 @@
 @property(readwrite,getter = isViewTransitionInProgress) BOOL viewTransitionInProgress;
 
 @end
+
+@interface UIViewController (APSafeTransitionLock)
+
+@end
