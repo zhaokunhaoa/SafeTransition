@@ -5,12 +5,12 @@
 //  Copyright © 2016年 hanamichi. All rights reserved.
 //
 
-#import "UINavigationController+APSafeTransition.h"
+#import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
-static char const * const ObjectTagKey = "ObjectTag";
-
 @interface UINavigationController () <UINavigationControllerDelegate>
+
+@property (nonatomic, assign) BOOL viewTransitionInProgress;
 
 @end
 
@@ -18,17 +18,17 @@ static char const * const ObjectTagKey = "ObjectTag";
 
 + (void)load {
     
-    method_exchangeImplementations(class_getInstanceMethod(self,@selector(pushViewController:animated:)),
-                                   class_getInstanceMethod(self,@selector(safePushViewController:animated:)));
+    method_exchangeImplementations(class_getInstanceMethod(self, @selector(pushViewController:animated:)),
+                                   class_getInstanceMethod(self, @selector(safePushViewController:animated:)));
     
-    method_exchangeImplementations(class_getInstanceMethod(self,@selector(popViewControllerAnimated:)),
-                                   class_getInstanceMethod(self,@selector(safePopViewControllerAnimated:)));
+    method_exchangeImplementations(class_getInstanceMethod(self, @selector(popViewControllerAnimated:)),
+                                   class_getInstanceMethod(self, @selector(safePopViewControllerAnimated:)));
     
-    method_exchangeImplementations(class_getInstanceMethod(self,@selector(popToRootViewControllerAnimated:)),
-                                   class_getInstanceMethod(self,@selector(safePopToRootViewControllerAnimated:)));
+    method_exchangeImplementations(class_getInstanceMethod(self, @selector(popToRootViewControllerAnimated:)),
+                                   class_getInstanceMethod(self, @selector(safePopToRootViewControllerAnimated:)));
     
-    method_exchangeImplementations(class_getInstanceMethod(self,@selector(popToViewController:animated:)),
-                                   class_getInstanceMethod(self,@selector(safePopToViewController:animated:)));
+    method_exchangeImplementations(class_getInstanceMethod(self, @selector(popToViewController:animated:)),
+                                   class_getInstanceMethod(self, @selector(safePopToViewController:animated:)));
     
 }
 
@@ -37,25 +37,25 @@ static char const * const ObjectTagKey = "ObjectTag";
     
     NSNumber *number = [NSNumber numberWithBool:property];
     
-    objc_setAssociatedObject(self,ObjectTagKey, number , OBJC_ASSOCIATION_RETAIN);
+    objc_setAssociatedObject(self, @selector(viewTransitionInProgress), number, OBJC_ASSOCIATION_RETAIN);
     
 }
 
-- (BOOL)isViewTransitionInProgress {
+- (BOOL)viewTransitionInProgress {
     
-    NSNumber *number =objc_getAssociatedObject(self, ObjectTagKey);
+    NSNumber *number = objc_getAssociatedObject(self, @selector(viewTransitionInProgress));
     
-    return[number boolValue];
+    return [number boolValue];
 }
 
 #pragma mark - Intercept Pop, Push, PopToRootVC
-- (NSArray*)safePopToRootViewControllerAnimated:(BOOL)animated {
+- (NSArray *)safePopToRootViewControllerAnimated:(BOOL)animated {
     
-    if(self.viewTransitionInProgress) return nil;
+    if (self.viewTransitionInProgress) return nil;
     
     if (animated) {
         
-        self.viewTransitionInProgress =YES;
+        self.viewTransitionInProgress = YES;
     }
     
     NSArray *viewControllers = [self safePopToRootViewControllerAnimated:animated];
@@ -68,13 +68,13 @@ static char const * const ObjectTagKey = "ObjectTag";
     return viewControllers;
 }
 
-- (NSArray*)safePopToViewController:(UIViewController*)viewController animated:(BOOL)animated {
+- (NSArray *)safePopToViewController:(UIViewController *)viewController animated:(BOOL)animated {
     
-    if(self.viewTransitionInProgress) return nil;
+    if (self.viewTransitionInProgress) return nil;
     
-    if(animated){
+    if (animated){
         
-        self.viewTransitionInProgress =YES;
+        self.viewTransitionInProgress = YES;
     }
     
     NSArray *viewControllers = [self safePopToViewController:viewController animated:animated];
@@ -87,13 +87,13 @@ static char const * const ObjectTagKey = "ObjectTag";
     return viewControllers;
 }
 
-- (UIViewController*)safePopViewControllerAnimated:(BOOL)animated {
+- (UIViewController *)safePopViewControllerAnimated:(BOOL)animated {
     
     if (self.viewTransitionInProgress) return nil;
     
     if (animated) {
         
-        self.viewTransitionInProgress =YES;
+        self.viewTransitionInProgress = YES;
     }
     
     UIViewController *viewController = [self safePopViewControllerAnimated:animated];
@@ -106,9 +106,9 @@ static char const * const ObjectTagKey = "ObjectTag";
     return viewController;
 }
 
-- (void)safePushViewController:(UIViewController*)viewController animated:(BOOL)animated {
+- (void)safePushViewController:(UIViewController *)viewController animated:(BOOL)animated {
     
-    if (self.isViewTransitionInProgress == NO) {
+    if (self.viewTransitionInProgress == NO) {
         
         [self safePushViewController:viewController animated:animated];
         
