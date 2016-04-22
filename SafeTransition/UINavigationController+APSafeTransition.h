@@ -1,6 +1,5 @@
 //
-//  UINavigationController+Consistent.h
-//  RunTime
+//  UINavigationController+APSafeTransition.h
 //
 //  Created by hanamichi on 16/1/4.
 //  Copyright © 2016年 hanamichi. All rights reserved.
