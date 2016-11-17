@@ -128,17 +128,17 @@
     Method m1;
     Method m2;
     
-    m1 = class_getInstanceMethod(self, @selector(sofaViewDidAppear:));
+    m1 = class_getInstanceMethod(self, @selector(safeViewDidAppear:));
     m2 = class_getInstanceMethod(self, @selector(viewDidAppear:));
     
     method_exchangeImplementations(m1, m2);
 }
 
-- (void)sofaViewDidAppear:(BOOL)animated {
+- (void)safeViewDidAppear:(BOOL)animated {
     
     self.navigationController.viewTransitionInProgress = NO;
     
-    [self sofaViewDidAppear:animated];
+    [self safeViewDidAppear:animated];
 }
 
 @end
