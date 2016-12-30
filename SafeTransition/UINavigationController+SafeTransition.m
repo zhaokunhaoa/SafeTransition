@@ -14,7 +14,7 @@
 
 @end
 
-@implementation UINavigationController (APSafeTransition)
+@implementation UINavigationController (SafeTransition)
 
 + (void)load {
     
