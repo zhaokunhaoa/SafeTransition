@@ -121,7 +121,7 @@
 
 @end
 
-@implementation UIViewController (APSafeTransitionLock)
+@implementation UIViewController (SafeTransitionLock)
 
 + (void)load {
     
